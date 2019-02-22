@@ -34,7 +34,6 @@ import { CurrencyTypeProvider } from './currency-type-provider';
 import { PercentTypeProvider } from './percent-type-provider';
 
 import {
-    generateRows,
     globalSalesValues,
 } from './generator.js';
 
@@ -106,7 +105,7 @@ const Command = ({ id, onExecute }) => {
 };
 
 const availableValues = {
-    product: globalSalesValues.product,
+    player: globalSalesValues.player,
     region: globalSalesValues.region,
     customer: globalSalesValues.customer,
 };
@@ -162,27 +161,56 @@ class DemoBase extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        let rows1 = [
+            {
+                "id": 0,
+                "region": "South America",
+                "sector": "Banking",
+                "channel": "VARs",
+                "customer": "Supply Warehouse",
+                "player": "playerA",
+                "amount": 9882,
+                "discount": 0.465,
+                "saleDate": "2016-03-08",
+                "shipped": false
+            },
+            {
+                "id": 1,
+                "region": "Africa",
+                "sector": "Manufacturing",
+                "channel": "Retail",
+                "customer": "Supply Warehouse",
+                "player": "playerC",
+                "amount": 6402,
+                "discount": 0.342,
+                "saleDate": "2016-02-15",
+                "shipped": true
+            },
+            {
+                "id": 2,
+                "region": "Europe",
+                "sector": "Health",
+                "channel": "VARs",
+                "customer": "Apollo Inc",
+                "player": "playerC",
+                "amount": 5530,
+                "discount": 0.428,
+                "saleDate": "2016-04-07",
+                "shipped": false
+            }];
+        console.log('rows1', rows1)
         this.state = {
             columns: [
-                { name: 'product', title: 'Product' },
-                { name: 'region', title: 'Region' },
-                { name: 'amount', title: 'Sale Amount' },
-                { name: 'discount', title: 'Discount' },
-                { name: 'saleDate', title: 'Sale Date' },
-                { name: 'customer', title: 'Customer' },
+                { name: 'player', title: 'Player' },
+                { name: 'region', title: 'Country' },
+                { name: 'amount', title: 'Winnings' },
             ],
             tableColumnExtensions: [
-                { columnName: 'product', width: 180 },
+                { columnName: 'player', width: 180 },
                 { columnName: 'region', width: 180 },
                 { columnName: 'amount', width: 120, align: 'right' },
-                { columnName: 'discount', width: 180 },
-                { columnName: 'saleDate', width: 180 },
-                { columnName: 'customer', width: 180 },
             ],
-            rows: generateRows({
-                columnValues: { id: ({ index }) => index, ...globalSalesValues },
-                length: 12,
-            }),
+            rows: rows1,
             sorting: [],
             editingRowIds: [],
             addedRows: [],
@@ -191,7 +219,7 @@ class DemoBase extends React.PureComponent {
             deletingRows: [],
             pageSize: 0,
             pageSizes: [5, 10, 0],
-            columnOrder: ['product', 'region', 'amount', 'discount', 'saleDate', 'customer'],
+            columnOrder: ['player', 'region', 'amount', 'discount', 'saleDate', 'customer'],
             currencyColumns: ['amount'],
             percentColumns: ['discount'],
             leftFixedColumns: [TableEditColumn.COLUMN_TYPE],
@@ -216,7 +244,7 @@ class DemoBase extends React.PureComponent {
                 amount: 0,
                 discount: 0,
                 saleDate: new Date().toISOString().split('T')[0],
-                product: availableValues.product[0],
+                player: availableValues.player[0],
                 region: availableValues.region[0],
                 customer: availableValues.customer[0],
             })),
