@@ -1,12 +1,10 @@
 import * as React from 'react';
 import {
-    SortingState, EditingState, PagingState, SummaryState,
-    IntegratedPaging, IntegratedSorting, IntegratedSummary,
+    SortingState, EditingState, SummaryState, IntegratedSorting, IntegratedSummary,
 } from '@devexpress/dx-react-grid';
 import {
     Grid,
     Table, TableHeaderRow, TableEditRow, TableEditColumn,
-    PagingPanel, DragDropProvider, TableColumnReordering,
     TableFixedColumns, TableSummaryRow,
 } from '@devexpress/dx-react-grid-material-ui';
 import Paper from '@material-ui/core/Paper';
@@ -31,7 +29,6 @@ import { withStyles } from '@material-ui/core/styles';
 import { ProgressBarCell } from './progress-bar-cell';
 import { HighlightedCell } from './highlighted-cell';
 import { CurrencyTypeProvider } from './currency-type-provider';
-import { PercentTypeProvider } from './percent-type-provider';
 
 
 const possibleValues = {
@@ -202,9 +199,8 @@ class DemoBase extends React.PureComponent {
             deletingRows: [],
             pageSize: 0,
             pageSizes: [5, 10, 0],
-            columnOrder: ['player', 'region', 'amount', 'discount', 'saleDate', 'customer'],
+            columnOrder: ['player', 'country', 'amount'],
             currencyColumns: ['amount'],
-            percentColumns: ['discount'],
             leftFixedColumns: [TableEditColumn.COLUMN_TYPE],
             totalSummaryItems: [
                 { columnName: 'amount', type: 'sum' },
@@ -224,8 +220,6 @@ class DemoBase extends React.PureComponent {
         this.changeAddedRows = addedRows => this.setState({
             addedRows: addedRows.map(row => (Object.keys(row).length ? row : {
                 amount: 0,
-                discount: 0,
-                saleDate: new Date().toISOString().split('T')[0],
                 player: availableValues.player[0],
                 country: availableValues.country[0],
             })),
@@ -261,9 +255,6 @@ class DemoBase extends React.PureComponent {
             });
             this.setState({ rows, deletingRows: [] });
         };
-        this.changeColumnOrder = (order) => {
-            this.setState({ columnOrder: order });
-        };
     }
 
     render() {
@@ -282,9 +273,7 @@ class DemoBase extends React.PureComponent {
             deletingRows,
             pageSize,
             pageSizes,
-            columnOrder,
             currencyColumns,
-            percentColumns,
             leftFixedColumns,
             totalSummaryItems,
         } = this.state;
@@ -300,12 +289,6 @@ class DemoBase extends React.PureComponent {
                         sorting={sorting}
                         onSortingChange={this.changeSorting}
                     />
-                    <PagingState
-                        currentPage={currentPage}
-                        onCurrentPageChange={this.changeCurrentPage}
-                        pageSize={pageSize}
-                        onPageSizeChange={this.changePageSize}
-                    />
                     <EditingState
                         editingRowIds={editingRowIds}
                         onEditingRowIdsChange={this.changeEditingRowIds}
@@ -320,21 +303,13 @@ class DemoBase extends React.PureComponent {
                     />
 
                     <IntegratedSorting />
-                    <IntegratedPaging />
                     <IntegratedSummary />
 
                     <CurrencyTypeProvider for={currencyColumns} />
-                    <PercentTypeProvider for={percentColumns} />
-
-                    <DragDropProvider />
 
                     <Table
                         columnExtensions={tableColumnExtensions}
                         cellComponent={Cell}
-                    />
-                    <TableColumnReordering
-                        order={columnOrder}
-                        onOrderChange={this.changeColumnOrder}
                     />
                     <TableHeaderRow showSortingControls />
                     <TableEditRow
@@ -350,9 +325,6 @@ class DemoBase extends React.PureComponent {
                     <TableSummaryRow />
                     <TableFixedColumns
                         leftColumns={leftFixedColumns}
-                    />
-                    <PagingPanel
-                        pageSizes={pageSizes}
                     />
                 </Grid>
 
@@ -374,7 +346,6 @@ class DemoBase extends React.PureComponent {
                                 columns={columns}
                             >
                                 <CurrencyTypeProvider for={currencyColumns} />
-                                <PercentTypeProvider for={percentColumns} />
                                 <Table
                                     columnExtensions={tableColumnExtensions}
                                     cellComponent={Cell}
