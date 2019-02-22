@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import Table from './Table.js';
+import TableAdvanced from './TableAdvanced.js';
 
 class App extends Component {
   render() {
     return <div>
-      <h1>Poker Leaderboard</h1>
-      <Table />
+      <h1 style={ { textAlign: 'center' } }>Poker Leaderboard</h1>
+      <div style={ { padding: '25px' } }>
+        <TableAdvanced />
+      </div>
     </div>;
   }
 }
