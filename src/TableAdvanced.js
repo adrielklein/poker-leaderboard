@@ -33,9 +33,12 @@ import { HighlightedCell } from './highlighted-cell';
 import { CurrencyTypeProvider } from './currency-type-provider';
 import { PercentTypeProvider } from './percent-type-provider';
 
-import {
-    globalSalesValues,
-} from './generator.js';
+
+const possibleValues = {
+    country: ['USA', 'Mexico', 'Canada'],
+    player: ['playerA', 'playerB', 'playerC'],
+    amount: ({ random }) => Math.floor(random() * 10000) + 1000,
+};
 
 const styles = theme => ({
     lookupEditCell: {
@@ -105,9 +108,8 @@ const Command = ({ id, onExecute }) => {
 };
 
 const availableValues = {
-    player: globalSalesValues.player,
-    region: globalSalesValues.region,
-    customer: globalSalesValues.customer,
+    player: possibleValues.player,
+    country: possibleValues.country,
 };
 
 const LookupEditCellBase = ({
@@ -161,56 +163,37 @@ class DemoBase extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        let rows1 = [
+        const data = [
             {
                 "id": 0,
-                "region": "South America",
-                "sector": "Banking",
-                "channel": "VARs",
-                "customer": "Supply Warehouse",
+                "country": "USA",
                 "player": "playerA",
                 "amount": 9882,
-                "discount": 0.465,
-                "saleDate": "2016-03-08",
-                "shipped": false
             },
             {
                 "id": 1,
-                "region": "Africa",
-                "sector": "Manufacturing",
-                "channel": "Retail",
-                "customer": "Supply Warehouse",
+                "country": "Canada",
                 "player": "playerC",
                 "amount": 6402,
-                "discount": 0.342,
-                "saleDate": "2016-02-15",
-                "shipped": true
             },
             {
                 "id": 2,
-                "region": "Europe",
-                "sector": "Health",
-                "channel": "VARs",
-                "customer": "Apollo Inc",
+                "country": "Mexico",
                 "player": "playerC",
                 "amount": 5530,
-                "discount": 0.428,
-                "saleDate": "2016-04-07",
-                "shipped": false
             }];
-        console.log('rows1', rows1)
         this.state = {
             columns: [
                 { name: 'player', title: 'Player' },
-                { name: 'region', title: 'Country' },
+                { name: 'country', title: 'Country' },
                 { name: 'amount', title: 'Winnings' },
             ],
             tableColumnExtensions: [
                 { columnName: 'player', width: 180 },
-                { columnName: 'region', width: 180 },
+                { columnName: 'country', width: 180 },
                 { columnName: 'amount', width: 120, align: 'right' },
             ],
-            rows: rows1,
+            rows: data,
             sorting: [],
             editingRowIds: [],
             addedRows: [],
@@ -224,7 +207,6 @@ class DemoBase extends React.PureComponent {
             percentColumns: ['discount'],
             leftFixedColumns: [TableEditColumn.COLUMN_TYPE],
             totalSummaryItems: [
-                { columnName: 'discount', type: 'avg' },
                 { columnName: 'amount', type: 'sum' },
             ],
         };
@@ -245,8 +227,7 @@ class DemoBase extends React.PureComponent {
                 discount: 0,
                 saleDate: new Date().toISOString().split('T')[0],
                 player: availableValues.player[0],
-                region: availableValues.region[0],
-                customer: availableValues.customer[0],
+                country: availableValues.country[0],
             })),
         });
         this.changeRowChanges = rowChanges => this.setState({ rowChanges });
