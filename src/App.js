@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Table from './Table.js';
 import TableAdvanced from './TableAdvanced.js';
 
 class App extends Component {
