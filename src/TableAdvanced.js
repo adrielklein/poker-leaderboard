@@ -4,8 +4,7 @@ import {
 } from '@devexpress/dx-react-grid';
 import {
     Grid,
-    Table, TableHeaderRow, TableEditRow, TableEditColumn,
-    TableFixedColumns, TableSummaryRow,
+    Table, TableHeaderRow, TableEditRow, TableEditColumn, TableSummaryRow,
 } from '@devexpress/dx-react-grid-material-ui';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
@@ -25,8 +24,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { withStyles } from '@material-ui/core/styles';
+import { rows, columns } from './data.js'
 
-import { ProgressBarCell } from './progress-bar-cell';
 import { HighlightedCell } from './highlighted-cell';
 import { CurrencyTypeProvider } from './currency-type-provider';
 
@@ -34,7 +33,6 @@ import { CurrencyTypeProvider } from './currency-type-provider';
 const possibleValues = {
     country: ['USA', 'Mexico', 'Canada'],
     player: ['playerA', 'playerB', 'playerC'],
-    amount: ({ random }) => Math.floor(random() * 10000) + 1000,
 };
 
 const styles = theme => ({
@@ -110,17 +108,15 @@ const availableValues = {
 };
 
 const LookupEditCellBase = ({
-                                availableColumnValues, value, onValueChange, classes,
+                                availableColumnValues, value, onValueChange,
                             }) => (
     <TableCell
-        className={classes.lookupEditCell}
     >
         <Select
             value={value}
             onChange={event => onValueChange(event.target.value)}
             input={(
                 <Input
-                    classes={{ root: classes.inputRoot }}
                 />
             )}
         >
@@ -136,9 +132,6 @@ export const LookupEditCell = withStyles(styles, { name: 'ControlledModeDemo' })
 
 const Cell = (props) => {
     const { column } = props;
-    if (column.name === 'discount') {
-        return <ProgressBarCell {...props} />;
-    }
     if (column.name === 'amount') {
         return <HighlightedCell {...props} />;
     }
@@ -159,49 +152,16 @@ const getRowId = row => row.id;
 class DemoBase extends React.PureComponent {
     constructor(props) {
         super(props);
-
-        const data = [
-            {
-                "id": 0,
-                "country": "USA",
-                "player": "playerA",
-                "amount": 9882,
-            },
-            {
-                "id": 1,
-                "country": "Canada",
-                "player": "playerC",
-                "amount": 6402,
-            },
-            {
-                "id": 2,
-                "country": "Mexico",
-                "player": "playerC",
-                "amount": 5530,
-            }];
         this.state = {
-            columns: [
-                { name: 'player', title: 'Player' },
-                { name: 'country', title: 'Country' },
-                { name: 'amount', title: 'Winnings' },
-            ],
-            tableColumnExtensions: [
-                { columnName: 'player', width: 180 },
-                { columnName: 'country', width: 180 },
-                { columnName: 'amount', width: 120, align: 'right' },
-            ],
-            rows: data,
+            columns,
+            rows,
             sorting: [],
             editingRowIds: [],
             addedRows: [],
             rowChanges: {},
-            currentPage: 0,
             deletingRows: [],
-            pageSize: 0,
-            pageSizes: [5, 10, 0],
             columnOrder: ['player', 'country', 'amount'],
             currencyColumns: ['amount'],
-            leftFixedColumns: [TableEditColumn.COLUMN_TYPE],
             totalSummaryItems: [
                 { columnName: 'amount', type: 'sum' },
             ],
@@ -225,8 +185,6 @@ class DemoBase extends React.PureComponent {
             })),
         });
         this.changeRowChanges = rowChanges => this.setState({ rowChanges });
-        this.changeCurrentPage = currentPage => this.setState({ currentPage });
-        this.changePageSize = pageSize => this.setState({ pageSize });
         this.commitChanges = ({ added, changed, deleted }) => {
             let { rows } = this.state;
             if (added) {
@@ -257,112 +215,109 @@ class DemoBase extends React.PureComponent {
         };
     }
 
-    render() {
-        const {
-            classes,
-        } = this.props;
+    getDialog(){
         const {
             rows,
             columns,
-            tableColumnExtensions,
+            deletingRows,
+            currencyColumns,
+        } = this.state;
+        return <Dialog
+          open={!!deletingRows.length}
+          onClose={this.cancelDelete}
+        >
+            <DialogTitle>
+                Delete Row
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Are you sure you want to delete the following row?
+                </DialogContentText>
+                <Paper>
+                    <Grid
+                      rows={rows.filter(row => deletingRows.indexOf(row.id) > -1)}
+                      columns={columns}
+                    >
+                        <CurrencyTypeProvider for={currencyColumns} />
+                        <Table
+                          cellComponent={Cell}
+                        />
+                        <TableHeaderRow />
+                    </Grid>
+                </Paper>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={this.cancelDelete} color="primary">
+                    Cancel
+                </Button>
+                <Button onClick={this.deleteRows} color="secondary">
+                    Delete
+                </Button>
+            </DialogActions>
+        </Dialog>;
+    }
+
+    getGrid(){
+        const {
+            rows,
+            columns,
             sorting,
             editingRowIds,
             addedRows,
             rowChanges,
-            currentPage,
-            deletingRows,
-            pageSize,
-            pageSizes,
             currencyColumns,
-            leftFixedColumns,
             totalSummaryItems,
         } = this.state;
+        return <Grid
+          rows={rows}
+          columns={columns}
+          getRowId={getRowId}
+        >
+            <SortingState
+              sorting={sorting}
+              onSortingChange={this.changeSorting}
+            />
+            <EditingState
+              editingRowIds={editingRowIds}
+              onEditingRowIdsChange={this.changeEditingRowIds}
+              rowChanges={rowChanges}
+              onRowChangesChange={this.changeRowChanges}
+              addedRows={addedRows}
+              onAddedRowsChange={this.changeAddedRows}
+              onCommitChanges={this.commitChanges}
+            />
+            <SummaryState
+              totalItems={totalSummaryItems}
+            />
 
+            <IntegratedSorting />
+            <IntegratedSummary />
+
+            <CurrencyTypeProvider for={currencyColumns} />
+
+            <Table
+              cellComponent={Cell}
+            />
+            <TableHeaderRow showSortingControls />
+            <TableEditRow
+              cellComponent={EditCell}
+            />
+            <TableEditColumn
+              width={170}
+              showAddCommand={!addedRows.length}
+              showEditCommand
+              showDeleteCommand
+              commandComponent={Command}
+            />
+            <TableSummaryRow />
+        </Grid>;
+    }
+
+    render() {
         return (
             <Paper>
-                <Grid
-                    rows={rows}
-                    columns={columns}
-                    getRowId={getRowId}
-                >
-                    <SortingState
-                        sorting={sorting}
-                        onSortingChange={this.changeSorting}
-                    />
-                    <EditingState
-                        editingRowIds={editingRowIds}
-                        onEditingRowIdsChange={this.changeEditingRowIds}
-                        rowChanges={rowChanges}
-                        onRowChangesChange={this.changeRowChanges}
-                        addedRows={addedRows}
-                        onAddedRowsChange={this.changeAddedRows}
-                        onCommitChanges={this.commitChanges}
-                    />
-                    <SummaryState
-                        totalItems={totalSummaryItems}
-                    />
-
-                    <IntegratedSorting />
-                    <IntegratedSummary />
-
-                    <CurrencyTypeProvider for={currencyColumns} />
-
-                    <Table
-                        columnExtensions={tableColumnExtensions}
-                        cellComponent={Cell}
-                    />
-                    <TableHeaderRow showSortingControls />
-                    <TableEditRow
-                        cellComponent={EditCell}
-                    />
-                    <TableEditColumn
-                        width={170}
-                        showAddCommand={!addedRows.length}
-                        showEditCommand
-                        showDeleteCommand
-                        commandComponent={Command}
-                    />
-                    <TableSummaryRow />
-                    <TableFixedColumns
-                        leftColumns={leftFixedColumns}
-                    />
-                </Grid>
-
-                <Dialog
-                    open={!!deletingRows.length}
-                    onClose={this.cancelDelete}
-                    classes={{ paper: classes.dialog }}
-                >
-                    <DialogTitle>
-                        Delete Row
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Are you sure you want to delete the following row?
-                        </DialogContentText>
-                        <Paper>
-                            <Grid
-                                rows={rows.filter(row => deletingRows.indexOf(row.id) > -1)}
-                                columns={columns}
-                            >
-                                <CurrencyTypeProvider for={currencyColumns} />
-                                <Table
-                                    columnExtensions={tableColumnExtensions}
-                                    cellComponent={Cell}
-                                />
-                                <TableHeaderRow />
-                            </Grid>
-                        </Paper>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.cancelDelete} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={this.deleteRows} color="secondary">
-                            Delete
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                { this.getGrid() }
+                { this.getDialog() }
             </Paper>
         );
     }
