@@ -32,8 +32,6 @@ const Command = ({ id, onExecute }) => {
 const getRowId = row => row._id;
 
 export default class DataTable extends React.PureComponent {
-
-
     render() {
         const {
             rows,

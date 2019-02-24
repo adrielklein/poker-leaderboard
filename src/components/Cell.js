@@ -6,7 +6,7 @@ import TableCell from '@material-ui/core/TableCell';
 import {
   Table, TableEditRow,
 } from '@devexpress/dx-react-grid-material-ui';
-import { countries } from '../constants.js';
+import { COUNTRIES } from '../constants.js';
 
 const getColor = (amount) => {
   if (amount < 3000) {
@@ -68,7 +68,7 @@ export const Cell = (props) => {
 export const EditCell = (props) => {
   const { column } = props;
   if (column.name === 'country') {
-    return <LookupEditCell {...props} availableColumnValues={countries} />;
+    return <LookupEditCell {...props} availableColumnValues={COUNTRIES} />;
   }
   return <TableEditRow.Cell {...props} />;
 };
