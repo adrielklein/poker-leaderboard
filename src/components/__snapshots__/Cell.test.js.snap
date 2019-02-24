@@ -1,5 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Cell 1`] = `
+<WithStyles(TableCellBase)
+  column={
+    Object {
+      "name": "fakeColumn",
+    }
+  }
+/>
+`;
+
+exports[`EditCell 1`] = `
+<WithStyles(EditCellBase)
+  availableColumnValues={
+    Array [
+      "1",
+      "2",
+    ]
+  }
+  column={
+    Object {
+      "name": "fakeColumn",
+    }
+  }
+/>
+`;
+
 exports[`HighlightedCell 1`] = `
 <WithStyles(TableCell)
   style={
@@ -9,4 +35,26 @@ exports[`HighlightedCell 1`] = `
     }
   }
 />
+`;
+
+exports[`LookupEditCell 1`] = `
+<WithStyles(TableCell)>
+  <WithStyles(WithFormControlContext(Select))
+    input={<WithStyles(Input) />}
+    onChange={[Function]}
+  >
+    <WithStyles(MenuItem)
+      key="1"
+      value="1"
+    >
+      1
+    </WithStyles(MenuItem)>
+    <WithStyles(MenuItem)
+      key="2"
+      value="2"
+    >
+      2
+    </WithStyles(MenuItem)>
+  </WithStyles(WithFormControlContext(Select))>
+</WithStyles(TableCell)>
 `;
