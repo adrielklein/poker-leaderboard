@@ -23,7 +23,6 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/Cancel';
-import { withStyles } from '@material-ui/core/styles';
 import { rows, columns } from './data.js'
 
 import { HighlightedCell } from './highlighted-cell';
@@ -32,22 +31,8 @@ import { CurrencyTypeProvider } from './currency-type-provider';
 
 const possibleValues = {
     country: ['USA', 'Mexico', 'Canada'],
-    player: ['playerA', 'playerB', 'playerC'],
 };
 
-const styles = theme => ({
-    lookupEditCell: {
-        paddingTop: theme.spacing.unit * 0.875,
-        paddingRight: theme.spacing.unit,
-        paddingLeft: theme.spacing.unit,
-    },
-    dialog: {
-        width: 'calc(100% - 16px)',
-    },
-    inputRoot: {
-        width: '100%',
-    },
-});
 
 const AddButton = ({ onExecute }) => (
     <div style={{ textAlign: 'center' }}>
@@ -68,7 +53,7 @@ const EditButton = ({ onExecute }) => (
 );
 
 const DeleteButton = ({ onExecute }) => (
-    <IconButton onClick={onExecute} title="Delete row">
+    <IconButton onClick={onExecute} title="Remove Player">
         <DeleteIcon />
     </IconButton>
 );
@@ -103,7 +88,6 @@ const Command = ({ id, onExecute }) => {
 };
 
 const availableValues = {
-    player: possibleValues.player,
     country: possibleValues.country,
 };
 
@@ -128,7 +112,7 @@ const LookupEditCellBase = ({
         </Select>
     </TableCell>
 );
-export const LookupEditCell = withStyles(styles, { name: 'ControlledModeDemo' })(LookupEditCellBase);
+export const LookupEditCell = LookupEditCellBase;
 
 const Cell = (props) => {
     const { column } = props;
@@ -160,7 +144,7 @@ class DemoBase extends React.PureComponent {
             addedRows: [],
             rowChanges: {},
             deletingRows: [],
-            columnOrder: ['player', 'country', 'amount'],
+            columnOrder: ['playerName', 'country', 'amount'],
             currencyColumns: ['amount'],
             totalSummaryItems: [
                 { columnName: 'amount', type: 'sum' },
@@ -180,7 +164,7 @@ class DemoBase extends React.PureComponent {
         this.changeAddedRows = addedRows => this.setState({
             addedRows: addedRows.map(row => (Object.keys(row).length ? row : {
                 amount: 0,
-                player: availableValues.player[0],
+                playerName: '',
                 country: availableValues.country[0],
             })),
         });
@@ -227,11 +211,11 @@ class DemoBase extends React.PureComponent {
           onClose={this.cancelDelete}
         >
             <DialogTitle>
-                Delete Row
+                Remove Player
             </DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    Are you sure you want to delete the following row?
+                    Are you sure you want to remove the following player?
                 </DialogContentText>
                 <Paper>
                     <Grid
@@ -303,7 +287,6 @@ class DemoBase extends React.PureComponent {
               cellComponent={EditCell}
             />
             <TableEditColumn
-              width={170}
               showAddCommand={!addedRows.length}
               showEditCommand
               showDeleteCommand
@@ -323,4 +306,4 @@ class DemoBase extends React.PureComponent {
     }
 }
 
-export default withStyles(styles, { name: 'ControlledModeDemo' })(DemoBase);
+export default DemoBase;
