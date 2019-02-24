@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DataTable from './DataTable.js';
+import DataTableContainer from './DataTableContainer.js';
 import Typography from '@material-ui/core/Typography';
 
 class App extends Component {
@@ -9,7 +9,7 @@ class App extends Component {
         Poker Leaderboard
       </Typography>
       <div style={ { padding: '45px', paddingTop: '20px' } }>
-        <DataTable />
+        <DataTableContainer />
       </div>
     </div>;
   }

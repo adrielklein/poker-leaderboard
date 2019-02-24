@@ -3,3 +3,5 @@ export const columns = [
     { name: 'country', title: 'Country' },
     { name: 'amount', title: 'Winnings' },
 ];
+
+export const countries = ['USA', 'Mexico', 'Canada'];
