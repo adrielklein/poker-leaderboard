@@ -138,7 +138,7 @@ class DataTable extends React.PureComponent {
 
     async componentDidMount() {
         this.setState({loading : true})
-        const response = await axios.get('http://localhost:4000/api/players');
+        const response = await axios.get('/api/players');
         this.setState({rows : response.data, loading: false })
     }
 
@@ -183,7 +183,7 @@ class DataTable extends React.PureComponent {
             if (added) {
                 const newRow = added[0];
                 const { amount, country, playerName } = newRow;
-                const response = await axios.post('http://localhost:4000/api/players/add', querystring.stringify({ amount, country, playerName }), {
+                const response = await axios.post('/api/players/add', querystring.stringify({ amount, country, playerName }), {
                     headers: {'Content-Type': 'application/x-www-form-urlencoded' }
                 });
                 rows = [
@@ -196,7 +196,7 @@ class DataTable extends React.PureComponent {
                 const oldRow = rows.find(row => row._id === changedRowId);
                 const newRow = { ...oldRow , ...changed[changedRowId] };
                 const { _id, amount, country, playerName } = newRow;
-                await axios.post('http://localhost:4000/api/players/update', querystring.stringify({ id: _id, amount, country, playerName }), {
+                await axios.post('/api/players/update', querystring.stringify({ id: _id, amount, country, playerName }), {
                     headers: {'Content-Type': 'application/x-www-form-urlencoded' }
                 });
                 rows = rows.map(row => (changed[row._id] ? newRow : row));
@@ -209,7 +209,7 @@ class DataTable extends React.PureComponent {
             const rows = getStateRows().slice();
             await getStateDeletingRows().forEach(async (rowId) => {
                 this.setState({loading : true});
-                await axios.delete('http://localhost:4000/api/players/remove', { headers: {
+                await axios.delete('/api/players/remove', { headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }, data: querystring.stringify({ id: rowId }) });
                 this.setState({ loading: false });
