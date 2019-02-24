@@ -9,7 +9,6 @@ const playerRoutes = express.Router();
 const path = require('path');
 
 function setUpServer() {
-  console.log('try to serve this directiory', path.join(__dirname, '..' ,'build'))
   app.use(express.static(path.join(__dirname, '..' ,'build')));
   app.use(cors());
   app.use(bodyParser.urlencoded());

@@ -21,7 +21,7 @@
     "react-scripts": "2.1.5"
   },
   "scripts": {
-    "start": "node server/server.js",
+    "start": "react-scripts build && node server/server.js",
     "start-cleint-dev": "react-scripts start",
     "start-server-dev": "nodemon server/server.js",
     "build": "react-scripts build",
