@@ -25,7 +25,7 @@ function setUpServer() {
 }
 
 function serveGetPlayers() {
-  playerRoutes.route('/').get(function (req, res) {
+  playerRoutes.route('/').get(async function (req, res) {
     Player.find(function (err, players) {
       if (err) {
         console.log(err);
@@ -51,7 +51,7 @@ function serveAddPlayer() {
     const player = new Player({ playerName, country, amount });
     player.save()
       .then(player => {
-        res.status(200).json({message: 'player added successfully'});
+        res.status(200).json({message: 'player added successfully', id: player._id });
       })
       .catch(err => {
         res.status(400).send('adding new player failed');
@@ -62,7 +62,7 @@ function serveAddPlayer() {
 function serveRemovePlayer() {
   playerRoutes.route('/remove').delete(function (req, res) {
     const { id } = req.body;
-    if (!id){
+    if (!id || id === 'undefined'){
       res.status(400).json({
         errorCode: 'invalidRequestBody',
         message: 'Request body must contain id' });
@@ -82,7 +82,7 @@ function serveRemovePlayer() {
 function serveUpdatePlayer() {
   playerRoutes.route('/update').post(function (req, res) {
     const { id, playerName, country, amount } = req.body;
-    if (!id){
+    if (!id || id === 'undefined'){
       res.status(400).json({
         errorCode: 'invalidRequestBody',
         message: 'Request body must contain id' });

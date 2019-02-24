@@ -23,10 +23,12 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/Cancel';
-import { rows, columns } from './data.js'
-
+import { columns } from './data.js'
 import { HighlightedCell } from './highlighted-cell';
 import { CurrencyTypeProvider } from './currency-type-provider';
+import LoadingOverlay from 'react-loading-overlay';
+import querystring from 'querystring';
+import axios from 'axios';
 
 
 const possibleValues = {
@@ -39,7 +41,7 @@ const AddButton = ({ onExecute }) => (
         <Button
             color="primary"
             onClick={onExecute}
-            title="Create new row"
+            title="Create new player"
         >
             New
         </Button>
@@ -47,13 +49,13 @@ const AddButton = ({ onExecute }) => (
 );
 
 const EditButton = ({ onExecute }) => (
-    <IconButton onClick={onExecute} title="Edit row">
+    <IconButton onClick={onExecute} title="Edit player">
         <EditIcon />
     </IconButton>
 );
 
 const DeleteButton = ({ onExecute }) => (
-    <IconButton onClick={onExecute} title="Remove Player">
+    <IconButton onClick={onExecute} title="Remove player">
         <DeleteIcon />
     </IconButton>
 );
@@ -91,7 +93,7 @@ const availableValues = {
     country: possibleValues.country,
 };
 
-const LookupEditCellBase = ({
+const LookupEditCell = ({
                                 availableColumnValues, value, onValueChange,
                             }) => (
     <TableCell
@@ -112,7 +114,6 @@ const LookupEditCellBase = ({
         </Select>
     </TableCell>
 );
-export const LookupEditCell = LookupEditCellBase;
 
 const Cell = (props) => {
     const { column } = props;
@@ -131,14 +132,21 @@ const EditCell = (props) => {
     return <TableEditRow.Cell {...props} />;
 };
 
-const getRowId = row => row.id;
+const getRowId = row => row._id;
 
-class DemoBase extends React.PureComponent {
+class DataTable extends React.PureComponent {
+
+    async componentDidMount() {
+        this.setState({loading : true})
+        const response = await axios.get('http://localhost:4000/api/players');
+        this.setState({rows : response.data, loading: false })
+    }
+
     constructor(props) {
         super(props);
         this.state = {
             columns,
-            rows,
+            rows: [],
             sorting: [],
             editingRowIds: [],
             addedRows: [],
@@ -169,33 +177,48 @@ class DemoBase extends React.PureComponent {
             })),
         });
         this.changeRowChanges = rowChanges => this.setState({ rowChanges });
-        this.commitChanges = ({ added, changed, deleted }) => {
+        this.commitChanges = async ({ added, changed, deleted }) => {
             let { rows } = this.state;
+            this.setState({loading : true});
             if (added) {
-                const startingAddedId = rows.length > 0 ? rows[rows.length - 1].id + 1 : 0;
+                const newRow = added[0];
+                const { amount, country, playerName } = newRow;
+                const response = await axios.post('http://localhost:4000/api/players/add', querystring.stringify({ amount, country, playerName }), {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded' }
+                });
                 rows = [
+                    { _id : response.data.id, ...newRow},
                     ...rows,
-                    ...added.map((row, index) => ({
-                        id: startingAddedId + index,
-                        ...row,
-                    })),
                 ];
             }
             if (changed) {
-                rows = rows.map(row => (changed[row.id] ? { ...row, ...changed[row.id] } : row));
+                const changedRowId = Object.keys(changed)[0];
+                const oldRow = rows.find(row => row._id === changedRowId);
+                const newRow = { ...oldRow , ...changed[changedRowId] };
+                const { _id, amount, country, playerName } = newRow;
+                await axios.post('http://localhost:4000/api/players/update', querystring.stringify({ id: _id, amount, country, playerName }), {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded' }
+                });
+                rows = rows.map(row => (changed[row._id] ? newRow : row));
             }
             this.setState({ rows, deletingRows: deleted || getStateDeletingRows() });
+            this.setState({loading : false});
         };
         this.cancelDelete = () => this.setState({ deletingRows: [] });
-        this.deleteRows = () => {
+        this.deleteRows = async () => {
             const rows = getStateRows().slice();
-            getStateDeletingRows().forEach((rowId) => {
-                const index = rows.findIndex(row => row.id === rowId);
+            await getStateDeletingRows().forEach(async (rowId) => {
+                this.setState({loading : true});
+                await axios.delete('http://localhost:4000/api/players/remove', { headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }, data: querystring.stringify({ id: rowId }) });
+                this.setState({ loading: false });
+                const index = rows.findIndex(row => row._id === rowId);
                 if (index > -1) {
                     rows.splice(index, 1);
                 }
+                this.setState({ rows, deletingRows: [] })
             });
-            this.setState({ rows, deletingRows: [] });
         };
     }
 
@@ -219,7 +242,7 @@ class DemoBase extends React.PureComponent {
                 </DialogContentText>
                 <Paper>
                     <Grid
-                      rows={rows.filter(row => deletingRows.indexOf(row.id) > -1)}
+                      rows={rows.filter(row => deletingRows.indexOf(row._id) > -1)}
                       columns={columns}
                     >
                         <CurrencyTypeProvider for={currencyColumns} />
@@ -297,13 +320,20 @@ class DemoBase extends React.PureComponent {
     }
 
     render() {
+        const { loading } = this.state;
         return (
+          <LoadingOverlay
+            active={ loading }
+            spinner
+            text='Loading players...'
+          >
             <Paper>
                 { this.getGrid() }
                 { this.getDialog() }
             </Paper>
+          </LoadingOverlay>
         );
     }
 }
 
-export default DemoBase;
+export default DataTable;
