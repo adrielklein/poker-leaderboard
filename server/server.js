@@ -6,9 +6,11 @@ const mongoose = require('mongoose');
 const Player = require('./player.model');
 const PORT = process.env.PORT || 4000;
 const playerRoutes = express.Router();
+const path = require('path');
 
 function setUpServer() {
   app.use(cors());
+  app.use(express.static(path.join(__dirname, '../build')));
   app.use(bodyParser.urlencoded());
   app.use('/api/players', playerRoutes);
   mongoose.connect('mongodb://adrielDb:fl8tIsGr8t@ds149365.mlab.com:49365/poker-tournament', { useNewUrlParser: true });
