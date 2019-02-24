@@ -144,7 +144,7 @@ class DemoBase extends React.PureComponent {
             addedRows: [],
             rowChanges: {},
             deletingRows: [],
-            columnOrder: ['player', 'country', 'amount'],
+            columnOrder: ['playerName', 'country', 'amount'],
             currencyColumns: ['amount'],
             totalSummaryItems: [
                 { columnName: 'amount', type: 'sum' },
@@ -164,7 +164,7 @@ class DemoBase extends React.PureComponent {
         this.changeAddedRows = addedRows => this.setState({
             addedRows: addedRows.map(row => (Object.keys(row).length ? row : {
                 amount: 0,
-                player: '',
+                playerName: '',
                 country: availableValues.country[0],
             })),
         });
