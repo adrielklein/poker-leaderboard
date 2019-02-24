@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders component 1`] = `
+<div
+  style={
+    Object {
+      "padding": "20px",
+    }
+  }
+>
+  <WithStyles(Typography)
+    align="center"
+    variant="h3"
+  >
+    Poker Leaderboard
+  </WithStyles(Typography)>
+  <div
+    style={
+      Object {
+        "padding": "45px",
+        "paddingTop": "20px",
+      }
+    }
+  >
+    <DataTableContainer />
+  </div>
+</div>
+`;

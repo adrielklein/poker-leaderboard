@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddButton 1`] = `
+<div
+  style={
+    Object {
+      "textAlign": "center",
+    }
+  }
+>
+  <WithStyles(Button)
+    color="primary"
+    title="Create new player"
+  >
+    New
+  </WithStyles(Button)>
+</div>
+`;
+
+exports[`CancelButton 1`] = `
+<WithStyles(IconButton)
+  color="secondary"
+  title="Cancel changes"
+>
+  <pure(CancelIcon) />
+</WithStyles(IconButton)>
+`;
+
+exports[`CommitButton 1`] = `
+<WithStyles(IconButton)
+  title="Save changes"
+>
+  <pure(SaveIcon) />
+</WithStyles(IconButton)>
+`;
+
+exports[`DeleteButton 1`] = `
+<WithStyles(IconButton)
+  title="Remove player"
+>
+  <pure(DeleteIcon) />
+</WithStyles(IconButton)>
+`;
+
+exports[`EditButton 1`] = `
+<WithStyles(IconButton)
+  title="Edit player"
+>
+  <pure(EditIcon) />
+</WithStyles(IconButton)>
+`;

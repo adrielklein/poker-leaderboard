@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HighlightedCell 1`] = `
+<WithStyles(TableCell)
+  style={
+    Object {
+      "color": "#009688",
+      "textAlign": "center",
+    }
+  }
+/>
+`;
