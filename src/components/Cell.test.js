@@ -13,16 +13,16 @@ it('HighlightedCell', () => {
 });
 
 it('LookupEditCell', () => {
-  const component = shallow(<LookupEditCell />);
+  const component = shallow(<LookupEditCell availableColumnValues={ ['1', '2']}/>);
   expect(toJson(component)).toMatchSnapshot();
 });
 
 it('Cell', () => {
-  const component = shallow(<Cell />);
+  const component = shallow(<Cell column={ { name: 'fakeColumn' } }/>);
   expect(toJson(component)).toMatchSnapshot();
 });
 
 it('EditCell', () => {
-  const component = shallow(<EditCell />);
+  const component = shallow(<EditCell column={ { name: 'fakeColumn' } } availableColumnValues={ ['1', '2']}/>);
   expect(toJson(component)).toMatchSnapshot();
 });
