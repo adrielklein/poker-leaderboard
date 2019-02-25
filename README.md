@@ -1,8 +1,6 @@
 # Poker Leaderboard
 
-_View and edit a list of folks who had some luck playing poker 🃏_
-
----
+🃏 View and edit a list of folks who had some luck playing poker 🃏
 
 ## Overview
 The apps purpose is to display a list of poker players along with their country of origin and tournament winnings. Users may add, remove, or modify players. Please take a look at the repository's website to play with the app. 
@@ -48,7 +46,7 @@ Currently the data is stored in a NoSql mongo database in a single `player` coll
 ```
 For simplicity of this project I think it made sense to store it like that but the problems that could come from this is that perhaps a prize is announced before a player has won it. It that case it would make more sense to store prizes in a separate collection and reference the prizes in the player collection. 
 
-Also, perhaps one player has won multiple prizes and we display the sum of them in the leaderboard. Having separate collections for these entities would help handle this complexity as well. In an ideal world, [here's how I would structure the database](./docs/databaseDesign.png). 
+Also, perhaps one player has won multiple prizes and we display the sum of them in the leaderboard. Having separate collections for these entities would help handle this complexity as well. In an ideal world, [here's how I would structure the database](./docs/databaseDesign.png). I would also consider having a separate collection for countries and have each person just reference their country by countryId.
 
 
 ---
