@@ -11,4 +11,3 @@ View and edit a list of folks who had some luck playing poker
 1. open browser to `http://localhost:3000/`
 1. enjoy! any code changes will automatically update the app
 
-test
