@@ -5,7 +5,7 @@ _View and edit a list of folks who had some luck playing poker 🃏_
 ---
 
 ## Overview
-The apps purpose is to display a list of poker players along with their country of origin and tournament winnings. Users may add, remove, or modify players. 
+The apps purpose is to display a list of poker players along with their country of origin and tournament winnings. Users may add, remove, or modify players. Please take a look at the repository's website to play with the app. 
 
 ---
 ## How to run locally
@@ -25,7 +25,7 @@ The apps purpose is to display a list of poker players along with their country 
 | ------------- |:-------------:| -----:|
 | MongoDB      | Node/Express | React |
 
-The app's data is stored in MongoDB. The backend api is written in Node.js and is served through Express. The api [is documented](https://documenter.getpostman.com/view/1208943/S11GRKeT) through postman. The front end was bootstrapped with create-react-app and uses that to compile the front end code into a production bundle. The front end relies on Material-UI as a UI framework and DevExtreme React Grid to display a nice looking grid.
+The app's data is stored in MongoDB. The backend api is written in Node.js and is served through Express. The api [is documented](https://documenter.getpostman.com/view/1208943/S11GRKeT) through postman. The front end was bootstrapped with create-react-app and uses that to compile the client side code into a production bundle. The front end relies on Material-UI as a UI framework and DevExtreme React Grid to display a nice looking grid.
 
 ---
 
@@ -34,23 +34,21 @@ The app's data is stored in MongoDB. The backend api is written in Node.js and i
 Currently the data is stored in a NoSql mongo database in a single `player` collection like this...
 ```
 {
-    "_id": {
-        "$oid": "5c721a7eac426fcf905abcb7"
-    },
+    "_id": "5c721a7eac426fcf905abcb7",
     "playerName": "Frank",
     "country": "USA",
     "amount": 234,
 }
 {
-    "_id": {
-        "$oid": "5c721a7eac426fcf905abcb7"
-    },
+    "_id": "5c721a8dac426fcf905abcb9",
     "playerName": "Jose",
     "country": "Mexico",
     "amount": 324,
 }
 ```
-For simplicity of this project I think it made sense to store it like that but the problems that could come from this is that perhaps a prize is announced before a player has won it. It that case it would make more sense to store prizes in a separate collection and reference the prizes in the player collection.
+For simplicity of this project I think it made sense to store it like that but the problems that could come from this is that perhaps a prize is announced before a player has won it. It that case it would make more sense to store prizes in a separate collection and reference the prizes in the player collection. 
+
+Also, perhaps one player has won multiple prizes and we display the sum of them in the leaderboard. Having separate collections for these entities would help handle this complexity as well. In an ideal world, [here's how I would structure the database](./docs/databaseDesign.png). 
 
 
 ---
